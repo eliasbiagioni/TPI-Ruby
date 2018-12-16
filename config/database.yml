@@ -9,24 +9,24 @@
 # And be sure to use new-style password hashing:
 #   https://dev.mysql.com/doc/refman/5.7/en/password-hashing.html
 #
-default: &default
+default: &default 
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root
-  password:
+  username: eliasbiagioni
+  password: eb123456
   socket: /var/run/mysqld/mysqld.sock
 
 development:
   <<: *default
-  database: TPI-Ruby_development
+  database: TPI_Ruby_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: TPI-Ruby_test
+  database: TPI_Ruby_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -49,6 +49,6 @@ test:
 #
 production:
   <<: *default
-  database: TPI-Ruby_production
+  database: TPI_Ruby_production
   username: TPI-Ruby
   password: <%= ENV['TPI-RUBY_DATABASE_PASSWORD'] %>
