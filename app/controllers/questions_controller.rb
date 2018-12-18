@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :update, :destroy]
-  before_action :authenticate_request, only: [:create, :update, :delete]
+  before_action :authenticate_request, only: [:create, :update, :destroy]
   attr_reader :current_user
 
   # GET /questions
@@ -28,10 +28,10 @@ class QuestionsController < ApplicationController
 
   # POST /questions
   def create
-    @question = Question.new(question_params)
-
+    user = JsonWebToken.decode(request.headers['X-QA-Key'])
+    @question = Question.new(question_params.merge({user_id: user[:user_id]}))
     if @question.save
-      render json: @question, status: :created, location: @question
+      render json: QuestionSerializer.new(@question), status: :created, location: @question
     else
       render json: @question.errors, status: :unprocessable_entity
     end
@@ -39,16 +39,31 @@ class QuestionsController < ApplicationController
 
   # PATCH/PUT /questions/1
   def update
-    if @question.update(question_params)
-      render json: @question
+    user = JsonWebToken.decode(request.headers['X-QA-Key'])
+    if (user[:user_id] == @question[:user_id])
+      if @question.update(question_params)
+        render json: QuestionSerializer.new(@question)
+      else
+        render json: @question.errors, status: :unprocessable_entity
+      end
     else
-      render json: @question.errors, status: :unprocessable_entity
+      render json: { error: 'Not Authorized' }, status: 401
     end
   end
 
   # DELETE /questions/1
   def destroy
-    @question.destroy
+    user = JsonWebToken.decode(request.headers['X-QA-Key'])
+    if (user[:user_id] == @question[:user_id])
+      if (@question.answers.count == 0)
+        @question.destroy
+        render json: {}
+      else
+        render json: {errors: "It has answers, it can't be deleted"}, status: :unprocessable_entity
+      end
+    else
+      render json: { error: 'Not Authorized' }, status: 401
+    end
   end
 
   private
@@ -59,7 +74,7 @@ class QuestionsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def question_params
-      params.fetch(:question, {})
+      params.require(:question).permit(:title, :description)
     end
 
     #Return if an user is authorized
