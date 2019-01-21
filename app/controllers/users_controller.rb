@@ -1,10 +1,12 @@
 class UsersController < ApplicationController
+  include ErrorSerializer
+
   before_action :set_user, only: [:show, :update, :destroy]
 
   # GET /users
   def index
     @users = UserSerializer.new(User.all)
-    render json: @users
+    render json: @users, status: :success
   end
 
   # GET /users/1
@@ -14,13 +16,11 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    puts "PARAMETROS: #{user_params}"
     @user = User.new(user_params)
-
     if @user.save
       render json: UserSerializer.new(@user), status: :created, location: @user
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
     end
   end
 
@@ -29,7 +29,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       render json: @user
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: ErrorSerializer.serialize(@user.errors), status: :unprocessable_entity
     end
   end
 
@@ -41,7 +41,11 @@ class UsersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params[:id])
+      begin  
+        @user = User.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        render json: { :errors => [{:id => "user", :title => "User not found"}] }
+      end
     end
 
     # Only allow a trusted parameter "white list" through.

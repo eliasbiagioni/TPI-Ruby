@@ -4,6 +4,8 @@ class QuestionSerializer
   has_many :answers, if: Proc.new{ |question, params| params[:complete] == true } 
   belongs_to :user, if: Proc.new{ |question, params| params[:complete] == true }
   
+  has_one :answer, if: Proc.new{|question, params| params[:resolve] == true}
+
   attribute :number_of_answers do |question|
   	question.answers.count	
   end
