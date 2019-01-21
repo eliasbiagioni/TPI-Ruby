@@ -5,7 +5,7 @@
 	sudo apt-get install libpq-dev
 ```
 2. Correr ``` bundle install``` para instalar las gemas necesarias.
-3. Correr bundle exec figaro install para crear el archivo config/application.yml
+3. Correr ``` bundle exec figaro``` install para crear el archivo config/application.yml
 4. En el archivo config/application.yml escribir:
 ```
 	development:
