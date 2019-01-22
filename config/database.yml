@@ -50,6 +50,6 @@ test:
 #
 production:
   <<: *default
-  database: TPI_Ruby_production
-  username: TPI-Ruby
-  password: <%= ENV['TPI-RUBY_DATABASE_PASSWORD'] %>
+  database: TPI_Ruby_development
+  #username: TPI-Ruby
+  #password: <%= ENV['TPI-RUBY_DATABASE_PASSWORD'] %>
