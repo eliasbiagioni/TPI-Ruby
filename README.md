@@ -28,3 +28,5 @@ db:seed crea 2 usuarios en la base de datos. En el archivo db/seeds.rb se encuen
 	rspec spec/requests/*.rb
 ```
 ACLARACION: el token expira 30 min después que se inicia sesión.
+
+Url en Heroku: https://tpi-ruby-eb.herokuapp.com/tu_request
