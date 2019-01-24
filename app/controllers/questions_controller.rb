@@ -144,7 +144,6 @@ class QuestionsController < ApplicationController
 
     #Return if an user is authorized
     def authenticate_request
-      puts "Entra"
       @current_user = AuthorizeApiRequest.call(request.headers).result
       render json: { error: 'Not Authorized' }, status: 401 unless @current_user
     end
