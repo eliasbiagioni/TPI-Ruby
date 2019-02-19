@@ -107,7 +107,6 @@ class QuestionsController < ApplicationController
     if @question.status 
       render json: { :errors => [{:id => "question", :title => "Question is solved"}] }, status: :forbidden
     else
-      #puts "ANSWER USER ID: #{@answer.user_id} CURRENT USER ID: #{@current_user.id}"
       if @answer.user_id != @current_user.id
         render json: { :errors => [{:id => "user", :title => "Not authorized to delete the answer"}] }, status: :unauthorized
       else
