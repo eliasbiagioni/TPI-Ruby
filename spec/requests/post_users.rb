@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Create users', :type => :request do
 	describe 'POST /users' do
 		before do
-			headers = {'Content-Type' => 'application/json'}
+			@headers = {'Content-Type' => 'application/json'}
 		end
 
 		it 'returns 422 status, password missing' do
@@ -12,7 +12,7 @@ RSpec.describe 'Create users', :type => :request do
     			"username": "test",
     			"screen_name": "tt",
     			 } }
-			post("/users", params: params, headers: headers)
+			post("/users", params: params.to_json, headers: @headers)
 			expect(JSON.parse(response.body)["errors"][0]['title']).to eql("Password can't be blank")
 			expect(response).to have_http_status(:unprocessable_entity)
 		end
@@ -23,7 +23,7 @@ RSpec.describe 'Create users', :type => :request do
     			"username": "test",
     			"screen_name": "tt",
     			"password": "1234"} }
-			post("/users", params: params, headers: headers)
+			post("/users", params: params.to_json, headers: @headers)
 			expect(JSON.parse(response.body)["errors"][0]['title']).to eql("Email is invalid")
 			expect(response).to have_http_status(:unprocessable_entity)
 		end
@@ -34,7 +34,7 @@ RSpec.describe 'Create users', :type => :request do
     			"username": "test",
     			"screen_name": "tt",
     			"password": "1234"} }
-			post("/users", params: params, headers: headers)
+			post("/users", params: params.to_json, headers: @headers)
 			expect(response).to have_http_status(:created)
 		end
 	end
