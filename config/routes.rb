@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
-  resources :users, :answers, :questions
+  resources :users, only: :create
   post 'sessions', to: 'authentication#authenticate'
   put 'questions/:id/resolve', to: 'questions#resolve'
-  get 'questions/:question_id/answers', to: 'questions#questions_answers'
-  post 'questions/:question_id/answers', to: 'questions#new_answer'
-  delete 'questions/:question_id/answers/:answer_id', to: 'questions#delete_answer'
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resources :questions do
+  		get :answers,  to: 'questions#questions_answers'
+  		post :answers, to: 'questions#new_answer'
+		delete :answers, path: 'answers/:answer_id', to: 'questions#delete_answer'
+  end
 end

@@ -2,9 +2,10 @@ class QuestionsController < ApplicationController
   include ErrorSerializer
 
   before_action :set_question, only: [:show, :update, :destroy, :resolve, :questions_answers, :new_answer, :delete_answer]
-  before_action :authenticate_request, only: [:create, :update, :destroy, :resolve, :new_answer, :delete_answer]
+  before_action :authenticate_request, :correct_content_type, only: [:create, :update, :destroy, :resolve, :new_answer, :delete_answer]
   before_action :question_belongs_to_current_user, only: [:resolve]
   before_action :set_answer, only: [:delete_answer]
+
   attr_reader :current_user
 
   # GET /questions
@@ -150,12 +151,16 @@ class QuestionsController < ApplicationController
 
     #Return if an answer belongs to the question passed as argument
     def answer_belongs_to_question
-      #puts "ESTO IMPRIME #{params[:question][:answer_id]}"
       (@question.answers.include?(Answer.find(params[:question][:answer_id])))
     end
 
     #Return if the question belongs to the current user
     def question_belongs_to_current_user
       (@current_user.id.equal?(@question.user_id)) ? true : (render json: { :errors => [{:id => "question_owner", :title => "Question doesn't belongs to the user that is logged in"}] }, status: :unauthorized)
+    end
+
+    #Return if content/type is application/json
+    def correct_content_type
+      render json: { error: 'Content-Type must be application/json' }, status: 406 unless request.content_type == 'application/json'
     end
 end
