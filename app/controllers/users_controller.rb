@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   include ErrorSerializer
 
   before_action :set_user, only: [:show, :update, :destroy]
+  before_action :correct_content_type, only: [:create]
 
   # GET /users
   def index
@@ -51,5 +52,10 @@ class UsersController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def user_params
       params.require(:user).permit(:email, :password, :screen_name, :username)
+    end
+
+    #Return if content/type is application/json
+    def correct_content_type
+      render json: { error: 'Content-Type must be application/json' }, status: 406 unless request.content_type == 'application/json'
     end
 end
